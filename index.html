@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather app</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter City Name" spellcheck="false">
+            <button><img src="images/search.png" alt=""></button>
+        </div>
+        <div class="weather">
+            <img src="images/rain.png" class="weather-icon" alt="">
+            <h1 class="temp">-°C</h1>
+            <h2 class="city">-</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png" alt="">
+                    <div>
+                        <p class="humidity">-</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/wind.png" alt="">
+                    <div>
+                        <p class="wind">- <km>
+                                <h></h>
+                        </p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.querySelector('.search input');
+    const searchButton = document.querySelector('.search button');
+    const weatherIcon = document.querySelector('.weather-icon');
+    const temperatureElement = document.querySelector('.temp');
+    const cityElement = document.querySelector('.city');
+    const humidityElement = document.querySelector('.humidity');
+    const windElement = document.querySelector('.wind');
+
+    searchButton.addEventListener('click', function () {
+        const cityName = searchInput.value;
+        getWeather(cityName);
+    });
+
+    async function getWeather(city) {
+        const apiUrl = `https://wttr.in/${city}?format=%t+%C+%w+%h`;
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.text();
+
+            if (response.ok) {
+                updateWeather(data);
+            } else {
+                alert(`Error: Unable to fetch weather data`);
+            }
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+        }
+    }
+
+    function updateWeather(data) {
+        // Parse the response from wttr.in
+        const [temperature, condition, wind, humidity] = data.split(' ');
+
+        // Update UI
+        temperatureElement.textContent = temperature;
+        cityElement.textContent = searchInput.value;
+        humidityElement.textContent = humidity;
+        windElement.textContent = wind;
+
+        // Update weather condition image based on condition text
+        const conditionLower = condition.toLowerCase();
+        weatherIcon.src = `images/${conditionLower.trim().replace(',', '')}.png`; // Adjust the path as needed
+    }
+});
+
+    </script>
+</body>
+
+</html>
